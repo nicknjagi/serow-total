@@ -43,10 +43,10 @@ async function getToken() {
   return token!;
 }
 
-export async function posFetch(path: string, options: RequestInit = {}) {
+export async function posFetch(qs: string, options: RequestInit = {}) {
   let t = await getToken();
 
-  let res = await fetch(`${BASE_URL}`, {
+  let res = await fetch(`${BASE_URL}${qs}`, {
     ...options,
     headers: {
       ...(options.headers || {}),
@@ -60,7 +60,7 @@ export async function posFetch(path: string, options: RequestInit = {}) {
     await login();
     t = await getToken();
 
-    res = await fetch(`${BASE_URL}`, {
+    res = await fetch(`${BASE_URL}${qs}`, {
       ...options,
       headers: {
         ...(options.headers || {}),
@@ -71,7 +71,8 @@ export async function posFetch(path: string, options: RequestInit = {}) {
   }
 
   if (!res.ok) {
-    console.log(`error`,res)
+    const text = await res.text(); // better debugging
+    console.log("POS error:", res.status, text);
     throw new Error(`POS request failed: ${res.status}`);
   }
 
