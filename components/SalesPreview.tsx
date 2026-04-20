@@ -31,7 +31,7 @@ export default function SalesPreview() {
     q: "",
   });
 
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, error, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sales", query],
     enabled: false,
     queryFn: async () => {
@@ -76,7 +76,7 @@ export default function SalesPreview() {
     <div className="py-4">
       <div className="flex items-center gap-2">
       <h1 className="text-2xl font-semibold px-4">Sales</h1>
-      {isLoading &&
+      {(isLoading || isFetching) &&
       <Loader className="animate-spin" size={18}/>}
       </div>
       <div className="flex gap-4 overflow-x-auto no-scrollbar p-4">
@@ -98,7 +98,7 @@ export default function SalesPreview() {
         </h3>
       </div>
 
-      <div className="flex flex-wrap gap-3 px-4">
+      <div className="flex flex-wrap gap-2 px-4">
         <div className="flex flex-col gap-[1px]">
           <span className="text-xs">Start date</span>
           <DatePicker
@@ -129,7 +129,10 @@ export default function SalesPreview() {
           />
         </div>
 
-        <Button variant={"default"} onClick={() => refetch()}>
+        <Button 
+        className="text-xs"
+        variant={"default"} onClick={() => refetch()}
+         disabled={isLoading || isFetching} >
           Refresh
         </Button>
       </div>
@@ -143,7 +146,7 @@ export default function SalesPreview() {
             <p className="text-sm">{sale.code}</p>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">{format(new Date(sale.created_at), "h:mm a")}</span>
-              <p className="text-sm font-medium">KES{sale.total_amount}</p>
+              <p className="font-medium">KES {sale.total_amount}</p>
             </div>
           </div>
         ))}

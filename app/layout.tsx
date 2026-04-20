@@ -22,12 +22,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} h-full antialiased`}
+      className={`${poppins.className} h-full antialiased`}
       suppressHydrationWarning
     >
-      <Providers>
-        <body className="min-h-full flex flex-col">{children}</body>
-      </Providers>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
