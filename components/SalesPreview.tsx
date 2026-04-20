@@ -4,11 +4,15 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { DatePicker } from "./DatePicker";
+import { format } from "date-fns";
 
 interface Sale {
   id: string;
   code: string;
   total_amount: number;
+  created_at: string;
+  voided:boolean;
+  payment_completed:boolean;
 }
 
 interface SalesData {
@@ -61,20 +65,35 @@ export default function SalesPreview() {
   const totalAmount =
     data?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
+  const voidedCount =
+    data?.results?.filter((s) => s.voided === true).length ?? 0;
+
+  const openCount =
+    data?.results?.filter((s) => s.payment_completed === false).length ?? 0;
+
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">Sales</h1>
-      <div className="flex gap-4 flex-wrap mb-4">
-        <h2 className="p-3 rounded-xl border border-gray-300 flex flex-col items-center gap-0.5">
+    <div className="py-4">
+      <h1 className="text-2xl font-semibold px-4">Sales</h1>
+      <div className="flex gap-4 overflow-x-auto no-scrollbar p-4">
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
           <span>Total Sales</span>
           <span className="text-lg font-medium">{data?.count}</span>
-        </h2>
-        <h2 className="p-3 rounded-xl border border-gray-300 flex flex-col items-center gap-0.5">
+        </h3>
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
           <span>Total Amount</span>
           <span className="text-lg font-medium">{totalAmount}</span>
-        </h2>
+        </h3>
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+          <span>Open Sales</span>
+          <span className="text-lg font-medium">{openCount}</span>
+        </h3>
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+          <span>Voided Sales</span>
+          <span className="text-lg font-medium">{voidedCount}</span>
+        </h3>
       </div>
-      <div className="flex flex-wrap gap-3">
+
+      <div className="flex flex-wrap gap-3 px-4">
         <div className="flex flex-col gap-[1px]">
           <span>Start date</span>
           <DatePicker
@@ -109,14 +128,18 @@ export default function SalesPreview() {
           Refresh
         </Button>
       </div>
-      <div className="mt-4">
+
+      <div className="mt-4 flex flex-col gap-2 px-4">
         {data?.results?.map((sale) => (
           <div
             key={sale.id}
-            className="flex items-center gap-2 mt-1 border-b border-gray-300"
+            className="flex flex-col gap-1 bg-white shadow-xs rounded-md py-2 px-3"
           >
-            <p>{sale.code}</p>
-            <p>{sale.total_amount}</p>
+            <p className="text-sm">{sale.code}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">{format(new Date(sale.created_at), "h:mm a")}</span>
+              <p className="text-sm font-medium">KES{sale.total_amount}</p>
+            </div>
           </div>
         ))}
       </div>
