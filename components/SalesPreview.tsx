@@ -1,6 +1,9 @@
 "use client";
 
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { DatePicker } from "./DatePicker";
 
 interface Sale {
   id: string;
@@ -14,8 +17,6 @@ interface SalesData {
 }
 
 export default function SalesPreview() {
-  const [sales, setSales] = useState<SalesData | null>(null);
-  const [loading, setLoading] = useState(true);
   const today = getToday();
   const [query, setQuery] = useState({
     start_date: today,
@@ -25,17 +26,25 @@ export default function SalesPreview() {
     q: "",
   });
 
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: ["sales", query],
+    enabled: false,
+    queryFn: async () => {
+      const qs = buildQuery(query);
+      console.log(`Fetching sales with query: ?q=&${qs}`);
+
+      const res = await fetch(`/api/sales?q=&${qs}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch sales");
+      }
+      return res.json() as Promise<SalesData>;
+    },
+    placeholderData: keepPreviousData,
+  });
+
   useEffect(() => {
-    const qs = buildQuery(query);
-
-    setLoading(false);
-    console.log(`Fetching sales with query: ?q=&${qs}`);
-
-    fetch(`/api/sales?q=&${qs}`)
-      .then((res) => res.json())
-      .then((data: SalesData) => setSales(data))
-      .finally(() => setLoading(false));
-  }, [query]);
+    refetch();
+  }, []);
 
   function buildQuery(params: Record<string, any>) {
     const search = new URLSearchParams();
@@ -49,32 +58,59 @@ export default function SalesPreview() {
     return search.toString();
   }
 
-  if (loading) return <p>Loading...</p>;
-
   const totalAmount =
-    sales?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
+    data?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
   return (
     <div>
-      <h1>Sales</h1>
-      <h2>Total Sales: {sales?.count}</h2>
-      <h2>Total Sales Amount {totalAmount} </h2>
-      <input
-        type="date"
-        value={query.start_date}
-        onChange={(e) =>
-          setQuery((q) => ({ ...q, start_date: e.target.value }))
-        }
-      />
+      <h1 className="text-2xl font-semibold mb-4">Sales</h1>
+      <div className="flex gap-4 flex-wrap mb-4">
+        <h2 className="p-3 rounded-xl border border-gray-300 flex flex-col items-center gap-0.5">
+          <span>Total Sales</span>
+          <span className="text-lg font-medium">{data?.count}</span>
+        </h2>
+        <h2 className="p-3 rounded-xl border border-gray-300 flex flex-col items-center gap-0.5">
+          <span>Total Amount</span>
+          <span className="text-lg font-medium">{totalAmount}</span>
+        </h2>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col gap-[1px]">
+          <span>Start date</span>
+          <DatePicker
+            value={fromYMD(query.start_date)}
+            placeholder="Start date"
+            onChange={(date) =>
+              setQuery((q) => ({
+                ...q,
+                start_date: toYMD(date),
+                page: 1,
+              }))
+            }
+          />
+        </div>
 
-      <input
-        type="date"
-        value={query.end_date}
-        onChange={(e) => setQuery((q) => ({ ...q, end_date: e.target.value }))}
-      />
+        <div className="flex flex-col gap-[1px]">
+          <span>End date</span>
+          <DatePicker
+            value={fromYMD(query.end_date)}
+            placeholder="End date"
+            onChange={(date) =>
+              setQuery((q) => ({
+                ...q,
+                end_date: toYMD(date),
+                page: 1,
+              }))
+            }
+          />
+        </div>
 
+        <Button variant={"default"} onClick={() => refetch()}>
+          Refresh
+        </Button>
+      </div>
       <div className="mt-4">
-        {sales?.results?.map((sale) => (
+        {data?.results?.map((sale) => (
           <div
             key={sale.id}
             className="flex items-center gap-2 mt-1 border-b border-gray-300"
@@ -90,4 +126,18 @@ export default function SalesPreview() {
 
 function getToday() {
   return new Date().toISOString().split("T")[0];
+}
+
+function fromYMD(dateStr: string) {
+  return new Date(dateStr + "T00:00:00");
+}
+
+function toYMD(date?: Date) {
+  if (!date) return "";
+
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  return `${y}-${m}-${d}`;
 }
