@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { DatePicker } from "./DatePicker";
 import { format } from "date-fns";
+import { Loader } from 'lucide-react'
 
 interface Sale {
   id: string;
@@ -73,7 +74,11 @@ export default function SalesPreview() {
 
   return (
     <div className="py-4">
+      <div className="flex items-center gap-2">
       <h1 className="text-2xl font-semibold px-4">Sales</h1>
+      {isLoading &&
+      <Loader className="animate-spin" size={18}/>}
+      </div>
       <div className="flex gap-4 overflow-x-auto no-scrollbar p-4">
         <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
           <span>Total Sales</span>
@@ -95,7 +100,7 @@ export default function SalesPreview() {
 
       <div className="flex flex-wrap gap-3 px-4">
         <div className="flex flex-col gap-[1px]">
-          <span>Start date</span>
+          <span className="text-xs">Start date</span>
           <DatePicker
             value={fromYMD(query.start_date)}
             placeholder="Start date"
@@ -110,7 +115,7 @@ export default function SalesPreview() {
         </div>
 
         <div className="flex flex-col gap-[1px]">
-          <span>End date</span>
+          <span className="text-xs">End date</span>
           <DatePicker
             value={fromYMD(query.end_date)}
             placeholder="End date"
