@@ -4,7 +4,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <main >
+      <main className="w-full max-w-xl mx-auto" >
        
        <SalesPreview />
       

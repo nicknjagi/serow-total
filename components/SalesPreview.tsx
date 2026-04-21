@@ -6,6 +6,15 @@ import { Button } from "./ui/button";
 import { DatePicker } from "./DatePicker";
 import { format } from "date-fns";
 import { Loader } from 'lucide-react'
+import { Badge } from "./ui/badge";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface Sale {
   id: string;
@@ -72,12 +81,15 @@ export default function SalesPreview() {
   const openCount =
     data?.results?.filter((s) => s.payment_completed === false).length ?? 0;
 
+  const totalPages = Math.ceil((data?.count ?? 0) / query.page_size);
+
   return (
     <div className="py-4">
       <div className="flex items-center gap-2">
-      <h1 className="text-2xl font-semibold px-4">Sales</h1>
-      {(isLoading || isFetching) &&
-      <Loader className="animate-spin" size={18}/>}
+        <h1 className="text-2xl font-semibold px-4">Sales</h1>
+        {(isLoading || isFetching) && (
+          <Loader className="animate-spin" size={18} />
+        )}
       </div>
       <div className="flex gap-4 overflow-x-auto no-scrollbar p-4">
         <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
@@ -99,7 +111,7 @@ export default function SalesPreview() {
       </div>
 
       <div className="flex flex-wrap gap-2 px-4">
-        <div className="flex flex-col gap-[1px]">
+        <div className="flex flex-col gap-px">
           <span className="text-xs">Start date</span>
           <DatePicker
             value={fromYMD(query.start_date)}
@@ -114,7 +126,7 @@ export default function SalesPreview() {
           />
         </div>
 
-        <div className="flex flex-col gap-[1px]">
+        <div className="flex flex-col gap-px">
           <span className="text-xs">End date</span>
           <DatePicker
             value={fromYMD(query.end_date)}
@@ -129,13 +141,62 @@ export default function SalesPreview() {
           />
         </div>
 
-        <Button 
-        className="text-xs"
-        variant={"default"} onClick={() => refetch()}
-         disabled={isLoading || isFetching} >
+        <Button
+          className="text-xs"
+          variant={"default"}
+          onClick={() => refetch()}
+          disabled={isLoading || isFetching}
+        >
           Refresh
         </Button>
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination className="ml-auto justify-start">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (query.page > 1) {
+                      setQuery((q) => ({ ...q, page: q.page - 1 }));
+                    }
+                  }}
+                />
+              </PaginationItem>
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <PaginationItem key={p}>
+                  <PaginationLink
+                    href="#"
+                    isActive={p === query.page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setQuery((q) => ({ ...q, page: p }));
+                    }}
+                  >
+                    {p}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              {/* Next */}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (query.page < totalPages) {
+                      setQuery((q) => ({ ...q, page: q.page + 1 }));
+                    }
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <div className="mt-4 flex flex-col gap-2 px-4">
         {data?.results?.map((sale) => (
@@ -143,9 +204,22 @@ export default function SalesPreview() {
             key={sale.id}
             className="flex flex-col gap-1 bg-white shadow-xs rounded-md py-2 px-3"
           >
-            <p className="text-sm">{sale.code}</p>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">{format(new Date(sale.created_at), "h:mm a")}</span>
+              <p className="text-sm">{sale.code}</p>
+              {sale.payment_completed && !sale.voided && (
+                <Badge className="bg-green-500/10 text-green-500 border border-green-100">
+                  Closed{" "}
+                </Badge>
+              )}
+              {!sale.payment_completed && !sale.voided && (
+                <Badge variant={"secondary"}>Open</Badge>
+              )}
+              {sale.voided && <Badge variant={"destructive"}>Voided </Badge>}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">
+                {format(new Date(sale.created_at), "h:mm a")}
+              </span>
               <p className="font-medium">KES {sale.total_amount}</p>
             </div>
           </div>
