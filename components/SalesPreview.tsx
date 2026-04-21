@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { DatePicker } from "./DatePicker";
 import { format } from "date-fns";
-import { Loader } from 'lucide-react'
+import { Loader, RefreshCcw } from 'lucide-react'
 import { Badge } from "./ui/badge";
 import {
   Pagination,
@@ -110,7 +110,7 @@ export default function SalesPreview() {
         </h3>
       </div>
 
-      <div className="flex flex-wrap gap-2 px-4">
+      <div className="flex flex-wrap items-end gap-2 px-4">
         <div className="flex flex-col gap-px">
           <span className="text-xs">Start date</span>
           <DatePicker
@@ -142,12 +142,13 @@ export default function SalesPreview() {
         </div>
 
         <Button
+          size={"icon-lg"}
           className="text-xs"
-          variant={"default"}
+          variant={"outline"}
           onClick={() => refetch()}
           disabled={isLoading || isFetching}
         >
-          Refresh
+          <RefreshCcw />
         </Button>
       </div>
 
