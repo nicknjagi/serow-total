@@ -71,7 +71,7 @@ export default function SalesPreview() {
 
     return search.toString();
   }
-
+  console.log(data?.results)
   const totalAmount =
     data?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
@@ -82,6 +82,20 @@ export default function SalesPreview() {
     data?.results?.filter((s) => s.payment_completed === false).length ?? 0;
 
   const totalPages = Math.ceil((data?.count ?? 0) / query.page_size);
+
+  const midnightTotal =
+    data?.results?.reduce((sum, transaction) => {
+      const createdAt = new Date(transaction.created_at);
+
+      const hour = createdAt.getHours();
+
+      // 12:00 AM -> 12:59:59 AM
+      if (hour === 0) {
+        return sum + transaction.total_amount;
+      }
+
+      return sum;
+    }, 0) ?? 0;
 
   return (
     <div className="py-4">
@@ -109,6 +123,12 @@ export default function SalesPreview() {
           <span className="text-lg font-medium">{voidedCount}</span>
         </h3>
       </div>
+
+      {midnightTotal > 0 && <div className="px-4">
+        <div className="border border-gray-100 rounded-xl px-2 py-1 bg-white mb-4 w-fit">
+          <p className="text-xs">Midnight total sales - <span className="font-medium text-sm">{midnightTotal}</span></p>
+        </div>
+      </div>}
 
       <div className="flex flex-wrap items-end gap-2 px-4">
         <div className="flex flex-col gap-px">
