@@ -77,17 +77,13 @@ export default function SaleDetail({ saleId}: Props) {
 
   if (isLoading) {
     return (
-      <DrawerContent>
+      <DrawerContent aria-describedby={undefined}>
         <DrawerHeader>
           <DrawerTitle>
-            <span className="invisible text-xl font-bold tracking-widest">
+            <span className="text-xl font-bold tracking-widest">
               SALE RECEIPT
             </span>
           </DrawerTitle>
-          <DrawerDescription
-            aria-describedby={undefined}
-            className="hidden"
-          ></DrawerDescription>
         </DrawerHeader>
         <div className="mx-auto w-full max-w-sm animate-pulse rounded-md bg-gray-200 p-4">
           <div className="h-4 w-3/4 rounded bg-gray-300" />
@@ -102,14 +98,13 @@ export default function SaleDetail({ saleId}: Props) {
 
   console.log(data?.sale_receipt_items[0].sale_receipt.code);
   return (
-    <DrawerContent className="max-w-md px-4">
+    <DrawerContent aria-describedby={undefined} className="max-w-md px-4">
       <DrawerHeader>
         <DrawerTitle>
           <span className="text-xl font-bold tracking-widest">
             SALE RECEIPT
           </span>
         </DrawerTitle>
-        <DrawerDescription className="hidden"></DrawerDescription>
       </DrawerHeader>
 
       <Separator className="my-4 border-dashed" />
