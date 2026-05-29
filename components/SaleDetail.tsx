@@ -22,10 +22,6 @@ type Props = {
 
 interface SaleDetailData {
   id: string;
-  sale_receipt: {
-    id: string;
-    code: string;
-  };
   currency: {
     currency_code: string;
   };
@@ -35,6 +31,10 @@ interface SaleDetailData {
       id: string;
       name: string;
       pieces_per_packet: number;
+    };
+    sale_receipt: {
+      id: string;
+      code: string;
     };
     total_quantity: number;
     unit_price: number;
@@ -86,9 +86,8 @@ export default function SaleDetail({ saleId}: Props) {
   }
 
   if (!data) return;
-  
-  console.log(data)
 
+  console.log(data?.sale_receipt_items[0].sale_receipt.code);
   return (
     <DrawerContent className="max-w-md px-4">
       <DrawerHeader>
@@ -97,23 +96,27 @@ export default function SaleDetail({ saleId}: Props) {
             SALE RECEIPT
           </span>
         </DrawerTitle>
-        <DrawerDescription className="hidden">
-          <span className="mt-1 text-xs text-muted-foreground">
-            Receipt #{data?.sale_receipt?.code}
-          </span>
-
-          {data?.date && (
-            <span className="text-xs text-muted-foreground">
-              {new Date(data?.date).toLocaleString()}
-            </span>
-          )}
-        </DrawerDescription>
+        <DrawerDescription className="hidden"></DrawerDescription>
       </DrawerHeader>
 
       <Separator className="my-4 border-dashed" />
 
       {/* Meta */}
       <div className="space-y-1 text-sm">
+        <div className="flex justify-between">
+          <span className="mt-1 text-muted-foreground">
+            Receipt #{data?.sale_receipt_items[0].sale_receipt.code}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Date</span>
+          {data?.date && (
+            <span className="text-muted-foreground">
+              {data?.date && format(new Date(data.date), "PPP")}
+            </span>
+          )}
+        </div>
         <div className="flex justify-between">
           <span>Status</span>
 
