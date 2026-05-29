@@ -77,11 +77,24 @@ export default function SaleDetail({ saleId}: Props) {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-sm animate-pulse rounded-md bg-gray-200 p-4">
-        <div className="h-4 w-3/4 rounded bg-gray-300" />
-        <div className="mt-2 h-4 w-1/2 rounded bg-gray-300" />
-        <div className="mt-4 h-48 rounded bg-gray-300" />
-      </div>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>
+            <span className="invisible text-xl font-bold tracking-widest">
+              SALE RECEIPT
+            </span>
+          </DrawerTitle>
+          <DrawerDescription
+            aria-describedby={undefined}
+            className="hidden"
+          ></DrawerDescription>
+        </DrawerHeader>
+        <div className="mx-auto w-full max-w-sm animate-pulse rounded-md bg-gray-200 p-4">
+          <div className="h-4 w-3/4 rounded bg-gray-300" />
+          <div className="mt-2 h-4 w-1/2 rounded bg-gray-300" />
+          <div className="mt-4 h-48 rounded bg-gray-300" />
+        </div>
+      </DrawerContent>
     );
   }
 
@@ -181,7 +194,7 @@ export default function SaleDetail({ saleId}: Props) {
           <span>TOTAL AMOUNT</span>
 
           <span>
-            {currency} {total?.toFixed(2)}
+            {currency} {Math.round(total!)}
           </span>
         </div>
       </div>
