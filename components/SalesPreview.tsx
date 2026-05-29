@@ -15,6 +15,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import SaleDetail from "./SaleDetail";
+
 
 interface Sale {
   id: string;
@@ -45,7 +57,7 @@ export default function SalesPreview() {
     enabled: false,
     queryFn: async () => {
       const qs = buildQuery(query);
-      console.log(`Fetching sales with query: ?q=&${qs}`);
+      // console.log(`Fetching sales with query: ?q=&${qs}`);
 
       const res = await fetch(`/api/sales?q=&${qs}`);
       if (!res.ok) {
@@ -124,11 +136,16 @@ export default function SalesPreview() {
         </h3>
       </div>
 
-      {midnightTotal > 0 && <div className="px-4">
-        <div className="border border-gray-100 rounded-xl px-2 py-1 bg-white mb-4 w-fit">
-          <p className="text-xs">Midnight total sales - <span className="font-medium text-sm">{midnightTotal}</span></p>
+      {midnightTotal > 0 && (
+        <div className="px-4">
+          <div className="border border-gray-100 rounded-xl px-2 py-1 bg-white mb-4 w-fit">
+            <p className="text-xs">
+              Midnight total sales -{" "}
+              <span className="font-medium text-sm">{midnightTotal}</span>
+            </p>
+          </div>
         </div>
-      </div>}
+      )}
 
       <div className="flex flex-wrap items-end gap-2 px-4">
         <div className="flex flex-col gap-px">
@@ -221,29 +238,33 @@ export default function SalesPreview() {
 
       <div className="mt-4 flex flex-col gap-2 px-4">
         {data?.results?.map((sale) => (
-          <div
-            key={sale.id}
-            className="flex flex-col gap-1 bg-white shadow-xs rounded-md py-2 px-3"
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-sm">{sale.code}</p>
-              {sale.payment_completed && !sale.voided && (
-                <Badge className="bg-green-500/10 text-green-500 border border-green-100">
-                  Closed{" "}
-                </Badge>
-              )}
-              {!sale.payment_completed && !sale.voided && (
-                <Badge variant={"secondary"}>Open</Badge>
-              )}
-              {sale.voided && <Badge variant={"destructive"}>Voided </Badge>}
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">
-                {format(new Date(sale.created_at), "h:mm a")}
-              </span>
-              <p className="font-medium">KES {sale.total_amount}</p>
-            </div>
-          </div>
+          <Drawer key={sale.id}>
+            <DrawerTrigger>
+              <div className="flex flex-col gap-1 bg-white shadow-xs rounded-md py-2 px-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm">{sale.code}</p>
+                  {sale.payment_completed && !sale.voided && (
+                    <Badge className="bg-green-500/10 text-green-500 border border-green-100">
+                      Closed{" "}
+                    </Badge>
+                  )}
+                  {!sale.payment_completed && !sale.voided && (
+                    <Badge variant={"secondary"}>Open</Badge>
+                  )}
+                  {sale.voided && <Badge variant={"destructive"}>Voided </Badge>}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">
+                    {format(new Date(sale.created_at), "h:mm a")}
+                  </span>
+                  <p className="font-medium">KES {sale.total_amount}</p>
+                </div>
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <SaleDetail saleId={sale.id} />
+            </DrawerContent>
+          </Drawer>
         ))}
       </div>
     </div>
