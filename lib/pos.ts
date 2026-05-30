@@ -78,3 +78,41 @@ export async function posFetch(qs: string, options: RequestInit = {}) {
 
   return res.json();
 }
+
+const SALE_URL = 'https://api.serow.app/api/v1/pos/sale-receipts'
+
+export async function saleFetch(saleId: string, options: RequestInit = {}) {
+  let t = await getToken();
+
+  let res = await fetch(`${SALE_URL}/${saleId}`, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${t}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  // handle expired token
+  if (res.status === 401) {
+    await login();
+    t = await getToken();
+
+    res = await fetch(`${SALE_URL}/${saleId}`, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${t}`,
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  if (!res.ok) {
+    const text = await res.text(); // better debugging
+    console.log("Sale fetch error:", res.status, text);
+    throw new Error(`Sale fetch request failed: ${res.status}`);
+  }
+
+  return res.json();
+}
