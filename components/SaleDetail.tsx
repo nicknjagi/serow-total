@@ -71,7 +71,7 @@ export default function SaleDetail({ saleId }: Props) {
     0,
   );
 
-  if (!isLoading) {
+  if (isLoading) {
     return (
       <SaleDetailSkeleton />
     );
