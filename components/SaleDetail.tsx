@@ -71,7 +71,7 @@ export default function SaleDetail({ saleId }: Props) {
     0,
   );
 
-  if (isLoading) {
+  if (!isLoading) {
     return (
       <SaleDetailSkeleton />
     );
@@ -223,7 +223,7 @@ export function SaleDetailSkeleton() {
         <div className="space-y-5">
           <Skeleton className="h-5 w-16" />
 
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 1 }).map((_, index) => (
             <div key={index} className="space-y-2">
               <div className="flex justify-between">
                 <Skeleton className="h-4 w-36" />
