@@ -19,10 +19,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import SaleDetail from "./SaleDetail";
@@ -83,7 +79,7 @@ export default function SalesPreview() {
 
     return search.toString();
   }
-  console.log(data?.results)
+  
   const totalAmount =
     data?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
@@ -91,7 +87,7 @@ export default function SalesPreview() {
     data?.results?.filter((s) => s.voided === true).length ?? 0;
 
   const openCount =
-    data?.results?.filter((s) => s.payment_completed === false).length ?? 0;
+    data?.results?.filter((s) => s.payment_completed === false && s.voided === false).length ?? 0;
 
   const totalPages = Math.ceil((data?.count ?? 0) / query.page_size);
 
@@ -118,19 +114,19 @@ export default function SalesPreview() {
         )}
       </div>
       <div className="flex gap-4 overflow-x-auto no-scrollbar p-4">
-        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-[0_0_6px_rgba(0,0,0,0.05)] flex flex-col items-center gap-0.5">
           <span>Total Sales</span>
           <span className="text-lg font-medium">{data?.count}</span>
         </h3>
-        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-[0_0_6px_rgba(0,0,0,0.05)] flex flex-col items-center gap-0.5">
           <span>Total Amount</span>
           <span className="text-lg font-medium">{totalAmount}</span>
         </h3>
-        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-[0_0_6px_rgba(0,0,0,0.05)] flex flex-col items-center gap-0.5">
           <span>Open Sales</span>
           <span className="text-lg font-medium">{openCount}</span>
         </h3>
-        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-sm flex flex-col items-center gap-0.5">
+        <h3 className="shrink-0 px-3 py-2 bg-white rounded-xl shadow-[0_0_6px_rgba(0,0,0,0.05)] flex flex-col items-center gap-0.5">
           <span>Voided Sales</span>
           <span className="text-lg font-medium">{voidedCount}</span>
         </h3>
@@ -240,7 +236,7 @@ export default function SalesPreview() {
         {data?.results?.map((sale) => (
           <Drawer key={sale.id}>
             <DrawerTrigger>
-              <div className="flex flex-col gap-1 bg-white shadow-xs rounded-md py-2 px-3">
+              <div className="flex flex-col gap-1 bg-white border border-gray-200 rounded-md py-2 px-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm">{sale.code}</p>
                   {sale.payment_completed && !sale.voided && (
@@ -251,7 +247,9 @@ export default function SalesPreview() {
                   {!sale.payment_completed && !sale.voided && (
                     <Badge variant={"secondary"}>Open</Badge>
                   )}
-                  {sale.voided && <Badge variant={"destructive"}>Voided </Badge>}
+                  {sale.voided && (
+                    <Badge variant={"destructive"}>Voided </Badge>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">
