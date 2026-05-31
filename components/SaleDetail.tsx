@@ -81,7 +81,7 @@ export default function SaleDetail({ saleId }: Props) {
 
   console.log(data?.sale_receipt_items[0].sale_receipt.code);
   return (
-    <div className="px-4">
+    <div className="no-scrollbar overflow-y-auto px-4">
       <div className="mx-auto w-full max-w-sm overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle>
@@ -91,77 +91,77 @@ export default function SaleDetail({ saleId }: Props) {
           </DrawerTitle>
         </DrawerHeader>
 
-        <div className="my-5 h-1 border-b border-gray-300 border-dashed" />
-        
-          {/* Meta */}
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span className="mt-1 text-muted-foreground">
-                Receipt #{data?.sale_receipt_items[0].sale_receipt.code}
-              </span>
-            </div>
+        <div className="my-5 h-1 border-b border-gray-400 border-dashed" />
 
-            <div className="flex justify-between">
-              <span>Date</span>
-              {data?.date && (
-                <span className="text-muted-foreground">
-                  {data?.date && format(new Date(data.date), "PPP")}
-                </span>
-              )}
-            </div>
-            <div className="flex justify-between">
-              <span>Status</span>
-
-              <div className="flex items-center justify-between">
-                {!data.is_draft && !data.voided && data.payment_completed && (
-                  <Badge className="bg-green-500/10 text-green-500 border border-green-100">
-                    Closed{" "}
-                  </Badge>
-                )}
-                {data.is_draft && !data.voided && !data.payment_completed && (
-                  <Badge variant={"secondary"}>Open</Badge>
-                )}
-                {data.voided && <Badge variant={"destructive"}>Voided </Badge>}
-              </div>
-            </div>
+        {/* Meta */}
+        <div className="space-y-1 text-sm">
+          <div className="flex justify-between">
+            <span className="mt-1 text-muted-foreground">
+              Receipt #{data?.sale_receipt_items[0].sale_receipt.code}
+            </span>
           </div>
 
-          <div className="my-5 h-1 border-b border-gray-300 border-dashed" />
-
-          {/* Items */}
-          <div className="space-y-4">
-            <h3>
-              Items{" "}
-              {data?.sale_receipt_items && (
-                <span>({data.sale_receipt_items.length})</span>
-              )}
-            </h3>
-            {data?.sale_receipt_items.map(
-              ({ id, item, total_amount, unit_price, quantity }) => (
-                <div key={id} className="space-y-1 text-sm">
-                  <div className="flex justify-between gap-2">
-                    <span className="max-w-[70%] wrap-break-word font-semibold">
-                      {item.name}
-                    </span>
-
-                    <span>
-                      {currency} {Math.round(total_amount)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>
-                      {(quantity * item.pieces_per_packet).toFixed(0)}
-                      {/* {quantity_option}  */}w × {currency}{" "}
-                      {(unit_price / item.pieces_per_packet).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              ),
+          <div className="flex justify-between">
+            <span>Date</span>
+            {data?.date && (
+              <span className="text-muted-foreground">
+                {data?.date && format(new Date(data.date), "PPP")}
+              </span>
             )}
           </div>
-        
-        <div className="my-5 h-1 border-b border-gray-300 border-dashed" />
+          <div className="flex justify-between">
+            <span>Status</span>
+
+            <div className="flex items-center justify-between">
+              {!data.is_draft && !data.voided && data.payment_completed && (
+                <Badge className="bg-green-500/10 text-green-500 border border-green-100">
+                  Closed{" "}
+                </Badge>
+              )}
+              {data.is_draft && !data.voided && !data.payment_completed && (
+                <Badge variant={"secondary"}>Open</Badge>
+              )}
+              {data.voided && <Badge variant={"destructive"}>Voided </Badge>}
+            </div>
+          </div>
+        </div>
+
+        <div className="my-5 h-1 border-b border-gray-400 border-dashed" />
+
+        {/* Items */}
+        <div className="space-y-4 ">
+          <h3>
+            Items{" "}
+            {data?.sale_receipt_items && (
+              <span>({data.sale_receipt_items.length})</span>
+            )}
+          </h3>
+          {data?.sale_receipt_items.map(
+            ({ id, item, total_amount, unit_price, quantity }) => (
+              <div key={id} className="space-y-1 text-sm">
+                <div className="flex justify-between gap-2">
+                  <span className="max-w-[70%] wrap-break-word font-semibold">
+                    {item.name}
+                  </span>
+
+                  <span>
+                    {currency} {Math.round(total_amount)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>
+                    {(quantity * item.pieces_per_packet).toFixed(0)}
+                    {/* {quantity_option}  */}w × {currency}{" "}
+                    {(unit_price / item.pieces_per_packet).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+
+        <div className="my-5 h-1 border-b border-gray-400 border-dashed" />
 
         {/* Totals */}
         <div className="space-y-2 text-sm">
@@ -174,7 +174,7 @@ export default function SaleDetail({ saleId }: Props) {
           </div>
         </div>
 
-        <div className="my-5 h-1 border-b border-gray-300 border-dashed" />
+        <div className="my-5 h-1 border-b border-gray-400 border-dashed" />
         <div className="flex justify-between mb-10">
           <span>Cashier</span>
           <span>{data?.sales_person.full_name}</span>
