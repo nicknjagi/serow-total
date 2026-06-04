@@ -81,7 +81,9 @@ export default function SalesPreview() {
   }
   
   const totalAmount =
-    data?.results?.reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
+  data?.results
+    ?.filter((s) => !s.voided)
+    .reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
   const voidedCount =
     data?.results?.filter((s) => s.voided === true).length ?? 0;
