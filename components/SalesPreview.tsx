@@ -236,7 +236,7 @@ export default function SalesPreview() {
         {data?.results?.map((sale) => (
           <Drawer key={sale.id}>
             <DrawerTrigger>
-              <div className="flex flex-col gap-1 bg-white border border-gray-200 rounded-md py-2 px-3">
+              <div className="flex flex-col gap-1 bg-white border border-gray-200 rounded-md py-2 px-3 active:bg-gray-100 transition duration-300">
                 <div className="flex items-center justify-between">
                   <p className="text-sm">{sale.code}</p>
                   {sale.payment_completed && !sale.voided && (
