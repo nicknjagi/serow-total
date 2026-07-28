@@ -143,9 +143,8 @@ export default function SalesPreview() {
         </h3>
       </div>
 
-      {(midnightTotal > 0 || returnedCount > 0) && (
         <div className="px-4 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          {midnightTotal && <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+          {midnightTotal > 0 && <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
             <p className="text-xs">
               Midnight total sales -{" "}
               <span className="font-medium text-sm">{midnightTotal}</span>
@@ -164,7 +163,6 @@ export default function SalesPreview() {
             </p>
           </div>}
         </div>
-      )}
 
       <div className="flex flex-wrap items-end gap-2 px-4">
         <div className="flex flex-col gap-px">
