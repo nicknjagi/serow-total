@@ -145,24 +145,24 @@ export default function SalesPreview() {
 
       {(midnightTotal > 0 || returnedCount > 0) && (
         <div className="px-4 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+          {midnightTotal && <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
             <p className="text-xs">
               Midnight total sales -{" "}
               <span className="font-medium text-sm">{midnightTotal}</span>
             </p>
-          </div>
-          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+          </div>}
+          {returnedCount > 0 && <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
             <p className="text-xs">
               Returned -{" "}
               <span className="font-medium text-sm">{returnedCount}</span>
             </p>
-          </div>
-          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+          </div>}
+          {returnedCount > 0 && <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
             <p className="text-xs">
               Returned Amount -{" "}
               <span className="font-medium text-sm">{returnedAmount}</span>
             </p>
-          </div>
+          </div>}
         </div>
       )}
 
