@@ -31,6 +31,7 @@ interface Sale {
   created_at: string;
   voided:boolean;
   payment_completed:boolean;
+  returned_status: "fully returned" | "not returned"
 }
 
 interface SalesData {
@@ -81,9 +82,9 @@ export default function SalesPreview() {
   }
   
   const totalAmount =
-  data?.results
-    ?.filter((s) => !s.voided)
-    .reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
+    data?.results
+      ?.filter((s) => !s.voided && s.returned_status !== "fully returned")
+      .reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
   const voidedCount =
     data?.results?.filter((s) => s.voided === true).length ?? 0;
@@ -106,6 +107,14 @@ export default function SalesPreview() {
 
       return sum;
     }, 0) ?? 0;
+
+  const returnedCount = data?.results
+      ?.filter((s) => !s.voided && s.returned_status === "fully returned").length ?? 0
+  
+  const returnedAmount =
+    data?.results
+      ?.filter((s) => !s.voided && s.returned_status === "fully returned")
+      .reduce((sum, s) => sum + s.total_amount, 0) ?? 0;
 
   return (
     <div className="py-4">
@@ -134,12 +143,24 @@ export default function SalesPreview() {
         </h3>
       </div>
 
-      {midnightTotal > 0 && (
-        <div className="px-4">
-          <div className="border border-gray-100 rounded-xl px-2 py-1 bg-white mb-4 w-fit">
+      {(midnightTotal > 0 || returnedCount > 0) && (
+        <div className="px-4 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
             <p className="text-xs">
               Midnight total sales -{" "}
               <span className="font-medium text-sm">{midnightTotal}</span>
+            </p>
+          </div>
+          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+            <p className="text-xs">
+              Returned -{" "}
+              <span className="font-medium text-sm">{returnedCount}</span>
+            </p>
+          </div>
+          <div className="border border-gray-100 rounded-xl px-2 py-0.5 shrink-0 bg-white mb-4 w-fit">
+            <p className="text-xs">
+              Returned Amount -{" "}
+              <span className="font-medium text-sm">{returnedAmount}</span>
             </p>
           </div>
         </div>
